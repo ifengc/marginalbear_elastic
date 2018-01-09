@@ -8,6 +8,7 @@ class Post(DocType):
     url = Keyword()
     author = Keyword()
     topic = Keyword()
+    board = Keyword()
 
     title_origin = Keyword()
     title_unigram = Text(analyzer=analyzer('whitespace'))

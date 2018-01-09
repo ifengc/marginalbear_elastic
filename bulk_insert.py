@@ -28,9 +28,13 @@ start = time.time()
 
 for i, line in enumerate(fileinput.input()):
     p = json.loads(line)
-    url_id = p['url'].replace('https://www.ptt.cc/bbs/', '').replace('.html', '').replace('.', '')
+
+    match = regex.search(r'https://www\.ptt\.cc/bbs/(\w+)/(.+)\.html', p['url'])
+    if match:
+        url_id = ''.join([match.group(1), match.group(2).replace('.', '')])
     doc = Post(meta={'id': url_id})
 
+    doc.board = match.group(1)
     doc.author = p['author'].split(" ", 1)[0]
     doc.url = p['url']
     doc.date = datetime.strptime(p['date'], '%a %b %d %H:%M:%S %Y')
