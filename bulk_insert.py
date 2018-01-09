@@ -35,7 +35,7 @@ for i, line in enumerate(fileinput.input()):
     doc.url = p['url']
     doc.date = datetime.strptime(p['date'], '%a %b %d %H:%M:%S %Y')
 
-    match = regex.search(r'\[(\w+)\]\s*(\.+)', p['title'])
+    match = regex.search(r'\[(.*)\]\s*(.+)', p['title'])
     if match:
         doc.topic, doc.title_origin = match.group(1, 2)
     else:
