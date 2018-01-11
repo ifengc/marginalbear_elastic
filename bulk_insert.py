@@ -6,21 +6,14 @@ from datetime import datetime
 from elasticsearch_dsl.connections import connections
 from elasticsearch.helpers import parallel_bulk
 
-from app.mapping import Post
 from okcom_tokenizer.tokenizers import CCEmojiJieba, UniGram
+from app.mapping import Post
+from utils import concat_tokens
+
 
 client = connections.create_connection(hosts=['elastic:changeme@localhost'], timeout=20)
 ccjieba = CCEmojiJieba()
 unigram = UniGram()
-
-
-def concat_tokens(tokens, pos):
-    if pos:
-        words = ' '.join([w.word for w in tokens])
-        poses = ' '.join([w.pos for w in tokens])
-        return words, poses
-    else:
-        return ' '.join(tokens)
 
 
 docs = []
