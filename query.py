@@ -1,12 +1,12 @@
 from elasticsearch_dsl import Search
 
 
-def post_search(client, tokenizer, query, top=100):
+def post_search(client, index, tokenizer, query, top=100):
     if tokenizer == 'ccjieba':
-        s = Search(using=client).query("match", title_ccjieba=query).params(preserve_order=True)
+        s = Search(using=client, index='post', doc_type='doc').query("match", title_ccjieba=query).params(preserve_order=True)
         return _combine_termvecs(client, s, top, tokenizer)
     elif tokenizer == 'unigram':
-        s = Search(using=client).query("match", title_unigram=query).params(preserve_order=True)
+        s = Search(using=client, index='post', doc_type='doc').query("match", title_unigram=query).params(preserve_order=True)
         return _combine_termvecs(client, s, top, tokenizer)
     else:
         return None
