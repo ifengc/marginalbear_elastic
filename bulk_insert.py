@@ -42,7 +42,7 @@ for i, line in enumerate(fileinput.input()):
     doc.title_ccjieba, doc.title_pos = concat_tokens(ccjieba.cut(doc.title_origin), True)
 
     for push in p['push']:
-        comment_author, content_origin = push.split(':', 1)
+        comment_author, content_origin = push.split(': ', 1)
         content_unigram = concat_tokens(unigram.cut(content_origin), False)
         content_ccjieba, content_pos = concat_tokens(ccjieba.cut(content_origin), True)
         doc.add_comment(comment_author,
