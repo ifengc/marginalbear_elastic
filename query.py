@@ -1,25 +1,26 @@
 from elasticsearch_dsl import Search
 
 
-def post_search(client, field, query):
-    if field == 'title_ccjieba':
-        s = Search(using=client).query("match", title_ccjieba=query)
-        hits = _search_scan(s)
-        print('{} docs hit'.format(len(hits)))
-        return _combine_termvecs(client, hits, field)
-    elif field == 'title_unigram':
-        s = Search(using=client).query("match", title_unigram=query)
-        hits = _search_scan(s)
-        print('{} docs hit'.format(len(hits)))
-        return _combine_termvecs(client, hits, field)
+def post_search(client, tokenizer, query, top=100):
+    if tokenizer == 'ccjieba':
+        s = Search(using=client).query("match", title_ccjieba=query).params(preserve_order=True)
+        hits = _search_scan(s, top)
+        print('{} docs retrieved'.format(len(hits)))
+        return _combine_termvecs(client, hits, tokenizer)
+    elif tokenizer == 'unigram':
+        s = Search(using=client).query("match", title_unigram=query).params(preserve_order=True)
+        hits = _search_scan(s, top)
+        print('{} docs retrieved'.format(len(hits)))
+        return _combine_termvecs(client, hits, tokenizer)
     else:
         return None
 
 
-def _combine_termvecs(client, hits, field):
+def _combine_termvecs(client, hits, tokenizer):
     if len(list(hits)) == 0:
         return None
     else:
+        fields = ['title_' + tokenizer, 'comments.content_' + tokenizer]
         ids = []
         mtermvecs = []
         for hit in hits:
@@ -33,21 +34,23 @@ def _combine_termvecs(client, hits, field):
                                     offsets=False,
                                     payloads=False,
                                     positions=False,
-                                    fields=[field],
+                                    fields=fields,
                                     ids=slice_ids)['docs']
             mtermvecs += m
 
         result = []
         for hit, termvecs in zip(hits, mtermvecs):
             hit = hit.to_dict()
-            hit['term_vectors'] = termvecs
+            hit['term_vectors'] = termvecs['term_vectors']
             result.append(hit)
 
         return result
 
 
-def _search_scan(s):
+def _search_scan(s, top):
     hits = []
-    for hit in s.scan():
+    for i, hit in enumerate(s.scan()):
+        if i == top:
+            break
         hits.append(hit)
     return hits
