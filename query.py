@@ -4,19 +4,16 @@ from elasticsearch_dsl import Search
 def post_search(client, tokenizer, query, top=100):
     if tokenizer == 'ccjieba':
         s = Search(using=client).query("match", title_ccjieba=query).params(preserve_order=True)
-        hits = _search_scan(s, top)
-        print('{} docs retrieved'.format(len(hits)))
-        return _combine_termvecs(client, hits, tokenizer)
+        return _combine_termvecs(client, s, top, tokenizer)
     elif tokenizer == 'unigram':
         s = Search(using=client).query("match", title_unigram=query).params(preserve_order=True)
-        hits = _search_scan(s, top)
-        print('{} docs retrieved'.format(len(hits)))
-        return _combine_termvecs(client, hits, tokenizer)
+        return _combine_termvecs(client, s, top, tokenizer)
     else:
         return None
 
 
-def _combine_termvecs(client, hits, tokenizer):
+def _combine_termvecs(client, s, top, tokenizer):
+    hits = _search_scan(s, top)
     if len(list(hits)) == 0:
         return None
     else:
@@ -53,4 +50,5 @@ def _search_scan(s, top):
         if i == top:
             break
         hits.append(hit)
+    print('{} docs retrieved'.format(len(hits)))
     return hits
