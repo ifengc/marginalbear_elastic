@@ -41,8 +41,14 @@ for i, line in enumerate(fileinput.input()):
     doc.title_unigram = concat_tokens(unigram.cut(doc.title_origin), False)
     doc.title_ccjieba, doc.title_pos = concat_tokens(ccjieba.cut(doc.title_origin), True)
 
+    push_dict = {}
     for push in p['push']:
         comment_author, content_origin = push.split(': ', 1)
+        if comment_author in push_dict:
+            push_dict[comment_author] += content_origin
+        else:
+            push_dict[comment_author] = content_origin
+    for comment_author, content_origin in push_dict.items():
         content_unigram = concat_tokens(unigram.cut(content_origin), False)
         content_ccjieba, content_pos = concat_tokens(ccjieba.cut(content_origin), True)
         content_audio_url = ''
