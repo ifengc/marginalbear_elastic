@@ -43,7 +43,8 @@ for i, line in enumerate(fileinput.input()):
 
     push_dict = {}
     for push in p['push']:
-        comment_author, content_origin = push.split(': ', 1)
+        comment_author, content_origin = push.split(':', 1)
+        content_origin = content_origin.strip()
         if comment_author in push_dict:
             push_dict[comment_author] += content_origin
         else:
