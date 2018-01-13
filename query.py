@@ -12,6 +12,11 @@ def post_search(client, index, tokenizer, query, top=100):
         return None
 
 
+def post_query_all(client, index):
+    s = Search(using=client, index=index, doc_type='doc').query("match_all")
+    return s.execute()
+
+
 def _combine_termvecs(client, s, top, tokenizer):
     hits = _search_scan(s, top)
     if len(list(hits)) == 0:
