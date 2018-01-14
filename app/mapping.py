@@ -15,12 +15,12 @@ class Post(DocType):
     title_ccjieba = Text(analyzer=analyzer('whitespace'))
     title_pos = Text(analyzer=analyzer('whitespace'))
     comments = Nested(properties={'comment_author': Keyword(),
-                                  'content_origin': Keyword(),
-                                  'content_unigram': Text(analyzer=analyzer('whitespace')),
-                                  'content_ccjieba': Text(analyzer=analyzer('whitespace')),
-                                  'content_pos': Text(analyzer=analyzer('whitespace')),
-                                  'content_audio_url': Keyword(),
-                                  'content_quality': HalfFloat()})
+                                  'comment_origin': Keyword(),
+                                  'comment_unigram': Text(analyzer=analyzer('whitespace')),
+                                  'comment_ccjieba': Text(analyzer=analyzer('whitespace')),
+                                  'comment_pos': Text(analyzer=analyzer('whitespace')),
+                                  'comment_audio_url': Keyword(),
+                                  'comment_quality': HalfFloat()})
 
     class Meta:
         index = 'post'
@@ -30,20 +30,20 @@ class Post(DocType):
 
     def add_comment(self,
                     comment_author,
-                    content_origin,
-                    content_unigram,
-                    content_ccjieba,
-                    content_pos,
-                    content_audio_url,
-                    content_quality):
+                    comment_origin,
+                    comment_unigram,
+                    comment_ccjieba,
+                    comment_pos,
+                    comment_audio_url,
+                    comment_quality):
 
         self.comments.append({'comment_author': comment_author,
-                              'content_origin': content_origin,
-                              'content_unigram': content_unigram,
-                              'content_ccjieba': content_ccjieba,
-                              'content_pos': content_pos,
-                              'content_audio_url': content_audio_url,
-                              'content_quality': content_quality})
+                              'comment_origin': comment_origin,
+                              'comment_unigram': comment_unigram,
+                              'comment_ccjieba': comment_ccjieba,
+                              'comment_pos': comment_pos,
+                              'comment_audio_url': comment_audio_url,
+                              'comment_quality': comment_quality})
 
     def bulk_dicts(docs):
         dicts = (d.to_dict(include_meta=True) for d in docs)

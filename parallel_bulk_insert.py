@@ -38,24 +38,24 @@ def parse(obj):
 
     push_dict = {}
     for push in obj['push']:
-        comment_author, content_origin = push.split(':', 1)
-        content_origin = content_origin.strip()
+        comment_author, comment_origin = push.split(':', 1)
+        comment_origin = comment_origin.strip()
         if comment_author in push_dict:
-            push_dict[comment_author] += content_origin
+            push_dict[comment_author] += comment_origin
         else:
-            push_dict[comment_author] = content_origin
-    for comment_author, content_origin in push_dict.items():
-        content_unigram = concat_tokens(unigram.cut(content_origin), False)
-        content_ccjieba, content_pos = concat_tokens(ccjieba.cut(content_origin), True)
-        content_audio_url = ''
-        content_quality = 1.0
+            push_dict[comment_author] = comment_origin
+    for comment_author, comment_origin in push_dict.items():
+        comment_unigram = concat_tokens(unigram.cut(comment_origin), False)
+        comment_ccjieba, comment_pos = concat_tokens(ccjieba.cut(comment_origin), True)
+        comment_audio_url = ''
+        comment_quality = 1.0
         doc.add_comment(comment_author,
-                        content_origin,
-                        content_unigram,
-                        content_ccjieba,
-                        content_pos,
-                        content_audio_url,
-                        content_quality)
+                        comment_origin,
+                        comment_unigram,
+                        comment_ccjieba,
+                        comment_pos,
+                        comment_audio_url,
+                        comment_quality)
     return doc
 
 
