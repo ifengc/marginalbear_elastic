@@ -48,12 +48,14 @@ def parse(obj):
         content_unigram = concat_tokens(unigram.cut(content_origin), False)
         content_ccjieba, content_pos = concat_tokens(ccjieba.cut(content_origin), True)
         content_audio_url = ''
+        content_quality = 1.0
         doc.add_comment(comment_author,
                         content_origin,
                         content_unigram,
                         content_ccjieba,
                         content_pos,
-                        content_audio_url)
+                        content_audio_url,
+                        content_quality)
     return doc
 
 
