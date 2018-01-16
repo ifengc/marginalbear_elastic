@@ -14,7 +14,7 @@ def post_search(client, index, tokenizer, query, top=100):
 
 def post_query_all(client, index):
     s = Search(using=client, index=index, doc_type='doc').query("match_all")
-    return s.execute()
+    return s
 
 
 def _combine_termvecs(client, s, top, tokenizer):
