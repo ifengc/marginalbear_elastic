@@ -22,7 +22,7 @@ def _combine_termvecs(client, s, top, tokenizer):
     if len(list(hits)) == 0:
         return None
     else:
-        fields = ['title_' + tokenizer, 'comments.content_' + tokenizer]
+        fields = ['title_' + tokenizer, 'comments.comment_' + tokenizer]
         ids = []
         mtermvecs = []
         for hit in hits:
