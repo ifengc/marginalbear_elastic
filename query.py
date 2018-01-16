@@ -42,7 +42,9 @@ def _combine_termvecs(client, s, top, tokenizer):
 
         result = []
         for hit, termvecs in zip(hits, mtermvecs):
+            score = hit.meta.score
             hit = hit.to_dict()
+            hit['score'] = score
             hit['term_vectors'] = termvecs['term_vectors']
             result.append(hit)
 
