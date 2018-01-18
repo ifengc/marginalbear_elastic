@@ -40,6 +40,7 @@ for i, line in enumerate(fileinput.input()):
 
     doc.title_unigram = concat_tokens(unigram.cut(doc.title_origin), False)
     doc.title_ccjieba, doc.title_pos = concat_tokens(ccjieba.cut(doc.title_origin), True)
+    doc.title_quality = 1.0
 
     push_dict = {}
     for push in p['push']:

@@ -14,6 +14,7 @@ class Post(DocType):
     title_unigram = Text(analyzer=analyzer('whitespace'))
     title_ccjieba = Text(analyzer=analyzer('whitespace'))
     title_pos = Text(analyzer=analyzer('whitespace'))
+    title_quality = HalfFloat()
     comments = Nested(properties={'comment_author': Keyword(),
                                   'comment_origin': Keyword(),
                                   'comment_unigram': Text(analyzer=analyzer('whitespace')),
