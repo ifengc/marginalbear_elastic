@@ -39,12 +39,15 @@ def parse(obj):
 
     push_dict = {}
     for push in obj['push']:
-        comment_author, comment_origin = push.split(':', 1)
-        comment_origin = comment_origin.strip()
-        if comment_author in push_dict:
-            push_dict[comment_author] += comment_origin
-        else:
-            push_dict[comment_author] = comment_origin
+        try:
+            comment_author, comment_origin = push.split(':', 1)
+            comment_origin = comment_origin.strip()
+            if comment_author in push_dict:
+                push_dict[comment_author] += comment_origin
+            else:
+                push_dict[comment_author] = comment_origin
+        except Exception as err:
+            print(err)
     for comment_author, comment_origin in push_dict.items():
         comment_unigram = concat_tokens(unigram.cut(comment_origin), False)
         comment_ccjieba, comment_pos = concat_tokens(ccjieba.cut(comment_origin), True)
