@@ -3,7 +3,7 @@ import itertools as it
 
 
 def avg_unigram_pmi(query, results, pairs_cnt):
-    output = {}
+    ans = {}
     total_pairs_cnt = sum(pairs_cnt.values())
     for result in results:
         title_terms = result['term_vectors']['title_unigram']['terms']
@@ -22,7 +22,7 @@ def avg_unigram_pmi(query, results, pairs_cnt):
 
         for comment in result['comments']:
             if comment['comment_pos'] == 'url':
-                output[result['score']] = (comment['comment_unigram'], result['title_origin'])
+                ans[(comment['comment_unigram'], result['title_origin'])] = result['score']
             else:
                 comment_unigram = comment['comment_unigram'].split(" ")
                 comment_score = 0
@@ -33,12 +33,13 @@ def avg_unigram_pmi(query, results, pairs_cnt):
                         comment_score += pmi_dict[key]
                     cnter += 1
                 comment_score /= cnter
-                output[comment_score * result['score']] = (comment['comment_origin'], result['title_origin'])
-    return sorted(output.items(), reverse=True)
+                ans[(comment['comment_origin'], result['title_origin'])] = comment_score * result['score']
+
+    return sorted([(v, k) for k, v in ans.items()], reverse=True)
 
 
 def avg_ccjieba_pmi(query, results, pairs_cnt):
-    output = {}
+    ans = {}
     total_pairs_cnt = sum(pairs_cnt.values())
     for result in results:
         title_terms = result['term_vectors']['title_ccjieba']['terms']
@@ -57,7 +58,7 @@ def avg_ccjieba_pmi(query, results, pairs_cnt):
 
         for comment in result['comments']:
             if comment['comment_pos'] == 'url':
-                output[result['score']] = (comment['comment_ccjieba'], result['title_origin'])
+                ans[(comment['comment_ccjieba'], result['title_origin'])] = result['score']
             else:
                 comment_ccjieba = comment['comment_ccjieba'].split(" ")
                 comment_score = 0
@@ -68,5 +69,5 @@ def avg_ccjieba_pmi(query, results, pairs_cnt):
                         comment_score += pmi_dict[key]
                     cnter += 1
                 comment_score /= cnter
-                output[comment_score * result['score']] = (comment['comment_origin'], result['title_origin'])
-    return sorted(output.items(), reverse=True)
+                ans[(comment['comment_origin'], result['title_origin'])] = comment_score * result['score']
+    return sorted([(v, k) for k, v in ans.items()], reverse=True)
