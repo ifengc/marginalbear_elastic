@@ -20,20 +20,27 @@ def avg_unigram_pmi(query, results, pairs_cnt):
                 p_xy = pairs_cnt[key] / total_pairs_cnt
                 pmi_dict[key] = math.log((p_x * p_y)) / math.log(p_xy) - 1
 
+        comment_scores = []
+        tmp_ans = {}
         for comment in result['comments']:
-            if comment['comment_pos'] == 'url':
-                ans[(comment['comment_unigram'], result['title_origin'])] = result['score']
+            comment_unigram = comment['comment_unigram'].split(" ")
+            comment_score = 0
+            cnter = 0
+            for query_term, comment_term in it.product(query, comment_unigram):
+                key = query_term + ':' + comment_term
+                if key in pmi_dict:
+                    comment_score += pmi_dict[key]
+                cnter += 1
+            comment_score /= cnter
+            comment_scores.append(comment_score)
+            tmp_ans[(comment['comment_pos'], comment['comment_origin'], result['title_origin'])] = comment_score * result['score']
+
+        max_comment_score = max(comment_scores)
+        for (pos, comment, title), score in tmp_ans.items():
+            if pos == 'url':
+                ans[(comment, title)] = max_comment_score * result['score']
             else:
-                comment_unigram = comment['comment_unigram'].split(" ")
-                comment_score = 0
-                cnter = 0
-                for query_term, comment_term in it.product(query, comment_unigram):
-                    key = query_term + ':' + comment_term
-                    if key in pmi_dict:
-                        comment_score += pmi_dict[key]
-                    cnter += 1
-                comment_score /= cnter
-                ans[(comment['comment_origin'], result['title_origin'])] = comment_score * result['score']
+                ans[(comment, title)] = score
 
     return sorted([(v, k) for k, v in ans.items()], reverse=True)
 
@@ -56,18 +63,26 @@ def avg_ccjieba_pmi(query, results, pairs_cnt):
                 p_xy = pairs_cnt[key] / total_pairs_cnt
                 pmi_dict[key] = math.log((p_x * p_y)) / math.log(p_xy) - 1
 
+        comment_scores = []
+        tmp_ans = {}
         for comment in result['comments']:
-            if comment['comment_pos'] == 'url':
-                ans[(comment['comment_ccjieba'], result['title_origin'])] = result['score']
+            comment_ccjieba = comment['comment_ccjieba'].split(" ")
+            comment_score = 0
+            cnter = 0
+            for query_term, comment_term in it.product(query, comment_ccjieba):
+                key = query_term + ':' + comment_term
+                if key in pmi_dict:
+                    comment_score += pmi_dict[key]
+                cnter += 1
+            comment_score /= cnter
+            comment_scores.append(comment_score)
+            tmp_ans[(comment['comment_pos'], comment['comment_origin'], result['title_origin'])] = comment_score * result['score']
+
+        max_comment_score = max(comment_scores)
+        for (pos, comment, title), score in tmp_ans.items():
+            if pos == 'url':
+                ans[(comment, title)] = max_comment_score * result['score']
             else:
-                comment_ccjieba = comment['comment_ccjieba'].split(" ")
-                comment_score = 0
-                cnter = 0
-                for query_term, comment_term in it.product(query, comment_ccjieba):
-                    key = query_term + ':' + comment_term
-                    if key in pmi_dict:
-                        comment_score += pmi_dict[key]
-                    cnter += 1
-                comment_score /= cnter
-                ans[(comment['comment_origin'], result['title_origin'])] = comment_score * result['score']
+                ans[(comment, title)] = score
+
     return sorted([(v, k) for k, v in ans.items()], reverse=True)
