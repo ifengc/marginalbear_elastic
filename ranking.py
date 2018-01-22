@@ -41,9 +41,11 @@ def avg_pmi(query, results, pairs_cnt, total_pairs_cnt, tokenizer):
 
         max_comment_score = max(comment_scores)
         for (pos, comment_unigram, comment, title), score in tmp_ans.items():
-            if pos == 'url':
-                ans[(comment_unigram, title)] = (comment, max_comment_score * result['score'])
+            if comment_unigram in ans:
+                ans[comment_unigram] = (ans[comment_unigram][0] + score, comment, title)
+            elif pos == 'url':
+                ans[comment_unigram] = (max_comment_score * result['score'], comment, title)
             else:
-                ans[(comment_unigram, title)] = (comment, score)
+                ans[comment_unigram] = (score, comment, title)
 
-    return sorted([(score, comment, title) for (comment_unigram, title), (comment, score) in ans.items()], reverse=True)
+    return sorted(list(ans.values()), reverse=True)
