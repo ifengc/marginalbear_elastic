@@ -37,19 +37,22 @@ def avg_pmi(query, results, pairs_cnt, total_pairs_cnt, tokenizer):
                 cnter += 1
             comment_score /= cnter
             comment_scores.append(comment_score)
-            tmp_ans[(comment['comment_pos'], comment['comment_unigram'], comment['comment_origin'], result['title_origin'])] = comment_score * result['score']
+            tmp_ans[(comment['comment_pos'], comment['comment_unigram'], comment['comment_origin'], comment['comment_audio_url'], result['title_origin'])] = comment_score * result['score']
 
-        for (pos, comment_unigram, comment, title), score in tmp_ans.items():
+        for (pos, comment_unigram, comment, audio_url, title), score in tmp_ans.items():
             if comment_unigram in ans:
                 ans[comment_unigram] = (ans[comment_unigram][0] + score, comment, title)
                 comment_scores.append(ans[comment_unigram][0])
             else:
                 ans[comment_unigram] = (score, comment, title)
+                comment_scores.append(score)
 
         max_comment_score = max(comment_scores)
-        for (pos, comment_unigram, comment, title), score in tmp_ans.items():
+        for (pos, comment_unigram, comment, audio_url, title), score in tmp_ans.items():
             if pos == 'url':
                 ans[comment_unigram] = (max_comment_score, comment, title)
+            elif audio_url != '':
+                ans[comment_unigram] = (max_comment_score, audio_url, title)
             else:
                 ans[comment_unigram] = (score, comment, title)
 
