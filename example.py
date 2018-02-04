@@ -4,7 +4,8 @@ import pickle
 from elasticsearch_dsl.connections import connections
 
 from okcom_tokenizer.tokenizers import CCEmojiJieba, UniGram
-from query import post_search, post_multifield_query
+from query import post_search, post_multifield_query, comment_query
+from app.mapping import Post
 from utils import concat_tokens
 from ranking import avg_pmi
 
@@ -41,6 +42,19 @@ def query_multifield(input_sentence, pairs_cnt, total_pairs_cnt):
     return sorted_ans
 
 
+def update_audio_url(client, query_field, query_str, top, url):
+    hits = comment_query(client, query_field, query_str, top)
+    cnt = 0
+    for hit in hits:
+        for comment in hit.comments:
+            if comment.comment_origin == query_str:
+                comment.comment_audio_url = url
+                cnt += 1
+        doc = Post(meta={'id': hit.meta.id})
+        doc.update(comments=hit.comments)
+    print("{} comments updated".format(cnt))
+
+
 def main(tokenizer):
     t = time.time()
     print('Loading ' + tokenizer + ' pmi pickle')
@@ -61,5 +75,10 @@ def main(tokenizer):
 
 
 if __name__ == '__main__':
-    tokenizer = sys.argv[1].strip()
-    main(tokenizer)
+    # tokenizer = sys.argv[1].strip()
+    # main(tokenizer)
+    with open('audio_url.csv', 'r') as f:
+        for line in f:
+            keyword, url = line.strip().strip(',')
+            update_audio_url(client, "comments.comment_origin", keyword, 100, url)
+            # update_audio_url(client, "comments.comment_origin", keyword, 100, "")
