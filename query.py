@@ -2,6 +2,13 @@ from elasticsearch_dsl import Search
 from elasticsearch_dsl.query import Q
 
 
+def comment_query(client, query_field, query_str, top):
+    q = Q("nested", path="comments", query=Q("match", **{query_field: query_str}))
+    s = Search(using=client, index='post', doc_type='doc').query(q)
+    hits = _search_scan(s, top)
+    return hits
+
+
 def post_multifield_query(client, index, query_ccjieba, query_unigram, top=100):
     q = Q('bool', should=[Q('match', title_ccjieba=query_ccjieba), Q('match', title_unigram=query_unigram)])
     s = Search(using=client, index='post', doc_type='doc').query(q).params(preserve_order=True)
