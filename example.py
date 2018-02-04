@@ -52,7 +52,7 @@ def update_audio_url(client, query_field, query_str, top, url):
                 cnt += 1
         doc = Post(meta={'id': hit.meta.id})
         doc.update(comments=hit.comments)
-    print("{} comments updated".format(cnt))
+    print("{} comments updated for comment: {}".format(cnt, query_str))
 
 
 def main(tokenizer):
@@ -77,8 +77,9 @@ def main(tokenizer):
 if __name__ == '__main__':
     # tokenizer = sys.argv[1].strip()
     # main(tokenizer)
+
     with open('audio_url.csv', 'r') as f:
         for line in f:
-            keyword, url = line.strip().strip(',')
+            keyword, url = line.strip().split(',')
             update_audio_url(client, "comments.comment_origin", keyword, 100, url)
             # update_audio_url(client, "comments.comment_origin", keyword, 100, "")
