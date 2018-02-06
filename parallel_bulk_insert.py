@@ -10,8 +10,10 @@ from app.mapping import Post
 from preprocessing import json_to_doc
 
 
-def parallel_insert(reader):
-    futures = [e.submit(json_to_doc, obj) for obj in reader]
+def parallel_insert(client, executors, filename):
+    start = time.time()
+    reader = jsonlines.open(filename, 'r')
+    futures = [executors.submit(json_to_doc, obj) for obj in reader]
     kwargs = {
         'total': len(futures),
         'unit': 'parsed',
@@ -21,7 +23,7 @@ def parallel_insert(reader):
     for f in tqdm(as_completed(futures), **kwargs):
         pass
     results = [f.result() for f in futures]
-    print("Parsing done.")
+    print("Json preprocessing done in {:.5f}s".format(start - time.time()))
 
     t = time.time()
     slicing = 5000
@@ -29,14 +31,13 @@ def parallel_insert(reader):
         docs = results[i - slicing:i]
         for r in parallel_bulk(client, Post.bulk_dicts(docs), thread_count=4, chunk_size=400):
             pass
-        print(i, time.time() - t)
+        print('{} insertion done in {:.5f}s'.format(i, time.time() - t))
         t = time.time()
+    print('Total elapsed time: {:.5f}s'.format(time.time() - start))
 
 
-client = connections.create_connection(hosts=['elastic:changeme@localhost'], timeout=20)
-e = ProcessPoolExecutor(6)
-
-start = time.time()
-input_name = sys.argv[1].strip()
-parallel_insert(jsonlines.open(input_name, 'r'))
-print('Total time:', time.time() - start)
+if __name__ == '__main__':
+    client = connections.create_connection(hosts=['elastic:changeme@localhost'], timeout=20)
+    executors = ProcessPoolExecutor(6)
+    filename = sys.argv[1].strip()
+    parallel_insert(client, executors, filename)
