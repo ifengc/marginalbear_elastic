@@ -1,6 +1,6 @@
-import os
 import time
 import pickle
+from configparser import ConfigParser
 
 from slackbot import bot
 from slackbot.bot import Bot
@@ -15,8 +15,9 @@ from ranking import avg_pmi
 
 top_title = 100
 top_response = 15
-bot.settings.API_TOKEN = os.environ['SLACK_TOKEN']
-SLACK_CHANNEL = os.environ['SLACK_CHANNEL']
+config = ConfigParser()
+bot.settings.API_TOKEN = config.read('slack', 'slack_token')
+SLACK_CHANNEL = config.read('slack', 'slack_channel')
 
 
 @listen_to(r'(.*)')
