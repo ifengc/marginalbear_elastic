@@ -102,3 +102,6 @@ ENV/
 
 # pickle
 *.pickle
+
+# config
+*.ini

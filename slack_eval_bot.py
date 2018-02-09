@@ -1,3 +1,4 @@
+import os
 import time
 import pickle
 from configparser import ConfigParser
@@ -15,7 +16,10 @@ from ranking import avg_pmi
 
 top_title = 100
 top_response = 15
+
+package_dir = os.path.dirname(os.path.realpath(__name__))
 config = ConfigParser()
+config.read(package_dir + '/config.ini')
 bot.settings.API_TOKEN = config.read('slack', 'slack_token')
 SLACK_CHANNEL = config.read('slack', 'slack_channel')
 
