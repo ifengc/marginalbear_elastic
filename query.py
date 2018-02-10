@@ -1,6 +1,8 @@
 from elasticsearch_dsl import Search
 from elasticsearch_dsl.query import Q
 
+from app.mapping import Post
+
 
 def comment_query(client, query_field, query_str, top):
     q = Q("nested", path="comments", query=Q("match", **{query_field: query_str}))
@@ -29,6 +31,10 @@ def post_search(client, index, tokenizer, query, top=100):
 def post_query_all(client, index):
     s = Search(using=client, index=index, doc_type='doc').query("match_all")
     return s
+
+
+def id_query(client, doc_id):
+    return Post.get(id=doc_id)
 
 
 def _combine_termvecs(client, s, top, tokenizer):
