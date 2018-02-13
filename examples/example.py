@@ -4,10 +4,10 @@ import pickle
 from elasticsearch_dsl.connections import connections
 
 from okcom_tokenizer.tokenizers import CCEmojiJieba, UniGram
-from query import post_search, post_multifield_query, comment_query
-from app.mapping import Post
-from utils import concat_tokens
-from ranking import avg_pmi
+from marginalbear_elastic.query import post_search, post_multifield_query, comment_query
+from marginalbear_elastic.mapping import Post
+from marginalbear_elastic.utils import concat_tokens
+from marginalbear_elastic.ranking import avg_pmi
 
 
 client = connections.create_connection(hosts=['elastic:changeme@localhost'], timeout=20)

@@ -3,7 +3,7 @@ import time
 import itertools as it
 from collections import Counter
 from elasticsearch_dsl.connections import connections
-from query import post_query_all
+from marginalbear_elastic.query import post_query_all
 
 
 def docfreq(title, comment):

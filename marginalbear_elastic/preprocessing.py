@@ -3,7 +3,7 @@ from datetime import datetime
 import regex
 
 from okcom_tokenizer.tokenizers import CCEmojiJieba, UniGram
-from app.mapping import Post
+from mapping import Post
 from utils import concat_tokens
 
 

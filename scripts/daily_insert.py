@@ -7,8 +7,8 @@ from elasticsearch_dsl.connections import connections
 from elasticsearch.helpers import parallel_bulk
 from tqdm import tqdm
 
-from app.mapping import Post
-from preprocessing import json_to_doc
+from marginalbear_elastic.mapping import Post
+from marginalbear_elastic.preprocessing import json_to_doc
 
 
 def parallel_insert(client, executors, filename):

@@ -9,9 +9,9 @@ from slackbot.bot import listen_to
 from elasticsearch_dsl.connections import connections
 
 from okcom_tokenizer.tokenizers import CCEmojiJieba, UniGram
-from query import post_multifield_query
-from utils import concat_tokens
-from ranking import avg_pmi
+from marginalbear_elastic.query import post_multifield_query
+from marginalbear_elastic.utils import concat_tokens
+from marginalbear_elastic.ranking import avg_pmi
 
 
 top_title = 100

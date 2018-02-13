@@ -1,7 +1,7 @@
 from elasticsearch_dsl import Search
 from elasticsearch_dsl.query import Q
 
-from app.mapping import Post
+from mapping import Post
 
 
 def comment_query(client, query_field, query_str, top):

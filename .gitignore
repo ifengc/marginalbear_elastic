@@ -105,3 +105,6 @@ ENV/
 
 # config
 *.ini
+
+# source raw data
+data/*

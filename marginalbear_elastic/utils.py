@@ -4,7 +4,6 @@ from configparser import ConfigParser
 from datetime import datetime
 from logging import StreamHandler, FileHandler
 
-
 from okcom_tokenizer.preprocessing import Word
 
 
