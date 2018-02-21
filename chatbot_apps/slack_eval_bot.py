@@ -19,9 +19,9 @@ top_response = 15
 
 package_dir = os.path.dirname(os.path.realpath(__name__))
 config = ConfigParser()
-config.read(package_dir + '/config.ini')
-bot.settings.API_TOKEN = config.read('slack', 'slack_token')
-SLACK_CHANNEL = config.read('slack', 'slack_channel')
+config.read(package_dir + '/chatbot_apps/config.ini')
+bot.settings.API_TOKEN = config.get('slack', 'slack_token')
+SLACK_CHANNEL = config.get('slack', 'slack_channel')
 
 
 @listen_to(r'(.*)')
@@ -53,7 +53,7 @@ if __name__ == '__main__':
     unigram = UniGram()
     t = time.time()
     print('Loading unigram pmi pickle')
-    with open('pmi_unigram.pickle', 'rb') as f:
+    with open(package_dir + '/chatbot_apps/pmi_unigram.pickle', 'rb') as f:
         pairs_cnt = dict(pickle.load(f))
     total_pairs_cnt = sum(pairs_cnt.values())
     print('Pickle loaded in {:.5f}s'.format(time.time() - t))
