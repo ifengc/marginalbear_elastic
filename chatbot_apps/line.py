@@ -30,7 +30,7 @@ app = Flask(__name__)
 
 package_dir = os.path.dirname(os.path.realpath(__name__))
 config = ConfigParser()
-config.read(package_dir + '/config.ini')
+config.read(package_dir + '/chatbot_apps/config.ini')
 channel_secret = config.get('line', 'line_channel_secret')
 channel_access_token = config.get('line', 'line_channel_access_token')
 
@@ -166,9 +166,9 @@ if __name__ == "__main__":
     unigram = UniGram()
     t = time.time()
     print('Loading unigram pmi pickle')
-    with open('pmi_unigram.pickle', 'rb') as f:
+    with open(package_dir + '/data/pmi_pickle/pmi_unigram.pickle', 'rb') as f:
         pairs_cnt = dict(pickle.load(f))
     total_pairs_cnt = sum(pairs_cnt.values())
     print('Pickle loaded in {:.5f}s'.format(time.time() - t))
 
-    app.run(debug=options.debug, port=options.port)
+    app.run(debug=options.debug, port=int(options.port))
