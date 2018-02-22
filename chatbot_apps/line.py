@@ -31,8 +31,8 @@ app = Flask(__name__)
 package_dir = os.path.dirname(os.path.realpath(__name__))
 config = ConfigParser()
 config.read(package_dir + '/config.ini')
-channel_secret = config.read('line', 'line_channel_secret')
-channel_access_token = config.read('line', 'line_channel_access_token')
+channel_secret = config.get('line', 'line_channel_secret')
+channel_access_token = config.get('line', 'line_channel_access_token')
 
 if channel_secret is None:
     print('Specify LINE_CHANNEL_SECRET as environment variable.')
