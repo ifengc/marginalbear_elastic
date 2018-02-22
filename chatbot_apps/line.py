@@ -5,6 +5,7 @@ import sys
 import time
 import pickle
 import regex
+import random
 import urllib
 from configparser import ConfigParser
 from argparse import ArgumentParser
@@ -19,6 +20,9 @@ from linebot.models import (
     TextMessage, TextSendMessage, UnfollowEvent, AudioSendMessage
 )
 
+from marginalbear_elastic.query import post_multifield_query
+from marginalbear_elastic.ranking import avg_pmi
+from marginalbear_elastic.utils import concat_tokens
 from okcom_tokenizer.tokenizers import CCEmojiJieba, UniGram
 
 
@@ -44,7 +48,7 @@ top_title = 100
 top_response = 15
 
 
-@app.route("/callback", methods=['POST'])
+@app.route("/linebot", methods=['POST'])
 def callback():
     signature = request.headers['X-Line-Signature']
 
@@ -65,8 +69,21 @@ def callback():
             continue
 
         if isinstance(event.message, TextMessage):
-            reply_text = event.message.text
-            msg_obj = gen_msg_obj(reply_text)
+            question_string = event.message.text
+            try:
+                query_ccjieba = ccjieba.cut(question_string.strip())
+                query_unigram = unigram.cut(question_string.strip())
+                results = post_multifield_query(client,
+                                                index='post',
+                                                query_ccjieba=concat_tokens(query_ccjieba, pos=False),
+                                                query_unigram=concat_tokens(query_unigram, pos=False),
+                                                top=top_title)
+                ans = avg_pmi(query_unigram, results, pairs_cnt, total_pairs_cnt, tokenizer='unigram')
+                reply_text = random.choice([comment for score, comment, title in ans[:top_response]])
+                print("question_str: {}  reply: {}".format(question_string, reply_text))
+                msg_obj = gen_msg_obj(reply_text)
+            except Exception as err:
+                print(err)
 
         elif isinstance(event, FollowEvent) or isinstance(event, JoinEvent):
             reply_text = follow_join_reply(event)
@@ -77,6 +94,8 @@ def callback():
             msg_obj = gen_msg_obj(reply_text)
 
         try:
+            if msg_obj is None:
+                msg_obj = gen_msg_obj("ㄤㄤㄤ")
             line_bot_api.reply_message(event.reply_token, msg_obj)
         except Exception as err:
             app.logger.error('okbot.chat_app.line_webhook, message: {}'.format(err))
