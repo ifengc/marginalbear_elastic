@@ -118,17 +118,22 @@ def _user_id(source):
 
 def gen_msg_obj(reply_text, audio_duration=None):
     if 'imgur' in reply_text:
-        match_web = regex.search(r'http:\/\/imgur\.com\/[a-z0-9A-Z]{7}', reply_text)
-        match_jpg = regex.search(r'http:\/\/(i|m)\.imgur\.com\/[a-z0-9A-Z]{7}\.jpg', reply_text)
+        match_web = regex.search(r'(http|https):\/\/imgur\.com\/[a-z0-9A-Z]{7}', reply_text)
+        match_jpg = regex.search(r'(http|https):\/\/(i|m)\.imgur\.com\/[a-z0-9A-Z]{7}\.jpg', reply_text)
         if match_web:
             match = match_web.group()
+            imgur_url = regex.sub('http:', 'https:', match)
+            print(imgur_url)
+            return ImageSendMessage(original_content_url=imgur_url,
+                                    preview_image_url=imgur_url)
         elif match_jpg:
             match = match_jpg.group()
+            imgur_url = regex.sub('http:', 'https:', match)
+            print(imgur_url)
+            return ImageSendMessage(original_content_url=imgur_url,
+                                    preview_image_url=imgur_url)
         else:
-            match = reply_text
-        imgur_url = regex.sub('http', 'https', match)
-        return ImageSendMessage(original_content_url=imgur_url,
-                                preview_image_url=imgur_url)
+            return TextSendMessage(text=reply_text)
     elif 'm4a' in reply_text:
         reply_text = reply_text.sub('', '.m4a')
         m4a_url = 'https://marginalbear.ml/m4a/' + urllib.parse.quote(reply_text) + '.m4a'
