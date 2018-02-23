@@ -53,7 +53,7 @@ if __name__ == '__main__':
     unigram = UniGram()
     t = time.time()
     print('Loading unigram pmi pickle')
-    with open(package_dir + '/chatbot_apps/pmi_unigram.pickle', 'rb') as f:
+    with open(package_dir + '/data/pmi_pickle/pmi_unigram.pickle', 'rb') as f:
         pairs_cnt = dict(pickle.load(f))
     total_pairs_cnt = sum(pairs_cnt.values())
     print('Pickle loaded in {:.5f}s'.format(time.time() - t))
