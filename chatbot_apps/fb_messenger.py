@@ -60,7 +60,7 @@ def retrieve(query_str):
                                         query_ccjieba=concat_tokens(query_ccjieba, pos=False),
                                         query_unigram=concat_tokens(query_unigram, pos=False),
                                         top=top_title)
-        ans = avg_pmi(query_unigram, results, pairs_cnt, total_pairs_cnt, tokenizer='unigram')
+        ans = avg_pmi(query_unigram, results, pairs_cnt, total_pairs_cnt, tokenizer='unigram', text_rank=True)
         reply_text = random.choice([comment for score, comment, title in ans[:top_response]])
         print("question_str: {}  reply: {}".format(query_str, reply_text))
     except Exception as err:

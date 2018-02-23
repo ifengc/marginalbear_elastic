@@ -19,7 +19,7 @@ def _create_pmi_dict(result, tokenizer, pairs_cnt, total_pairs_cnt):
     return pmi_dict
 
 
-def avg_pmi(query, results, pairs_cnt, total_pairs_cnt, tokenizer):
+def avg_pmi(query, results, pairs_cnt, total_pairs_cnt, tokenizer, text_rank=False):
     ans = {}
     for result in results:
         pmi_dict = _create_pmi_dict(result, tokenizer, pairs_cnt, total_pairs_cnt)
@@ -49,9 +49,9 @@ def avg_pmi(query, results, pairs_cnt, total_pairs_cnt, tokenizer):
 
         max_comment_score = max(comment_scores)
         for (pos, comment_unigram, comment, audio_url, title), score in tmp_ans.items():
-            if pos == 'url':
+            if pos == 'url' and not text_rank:
                 ans[comment_unigram] = (max_comment_score, comment, title)
-            elif audio_url != '':
+            elif audio_url != '' and not text_rank:
                 ans[comment_unigram] = (max_comment_score, audio_url, title)
             else:
                 ans[comment_unigram] = (score, comment, title)
