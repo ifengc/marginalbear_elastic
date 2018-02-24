@@ -1,11 +1,11 @@
+import os
 import sys
 import time
 import pickle
 from elasticsearch_dsl.connections import connections
 
 from okcom_tokenizer.tokenizers import CCEmojiJieba, UniGram
-from marginalbear_elastic.query import post_search, post_multifield_query, comment_query
-from marginalbear_elastic.mapping import Post
+from marginalbear_elastic.query import post_search, post_multifield_query
 from marginalbear_elastic.utils import concat_tokens
 from marginalbear_elastic.ranking import avg_pmi
 
@@ -13,6 +13,8 @@ from marginalbear_elastic.ranking import avg_pmi
 client = connections.create_connection(hosts=['elastic:changeme@localhost'], timeout=20)
 ccjieba = CCEmojiJieba()
 unigram = UniGram()
+
+package_dir = os.path.dirname(os.path.realpath(__name__))
 
 
 def query_ccjieba(input_sentence, pairs_cnt, total_pairs_cnt):
@@ -42,23 +44,10 @@ def query_multifield(input_sentence, pairs_cnt, total_pairs_cnt):
     return sorted_ans
 
 
-def update_audio_url(client, query_field, query_str, top, url):
-    hits = comment_query(client, query_field, query_str, top)
-    cnt = 0
-    for hit in hits:
-        for comment in hit.comments:
-            if comment.comment_origin == query_str:
-                comment.comment_audio_url = url
-                cnt += 1
-        doc = Post(meta={'id': hit.meta.id})
-        doc.update(comments=hit.comments)
-    print("{} comments updated for comment: {}".format(cnt, query_str))
-
-
 def main(tokenizer):
     t = time.time()
     print('Loading ' + tokenizer + ' pmi pickle')
-    with open('pmi_' + tokenizer + '.pickle', 'rb') as f:
+    with open(package_dir + '/data/pmi_pickle/pmi_' + tokenizer + '.pickle', 'rb') as f:
         pairs_cnt = dict(pickle.load(f))
     total_pairs_cnt = sum(pairs_cnt.values())
     print('Pickle loaded in {:.5f}s'.format(time.time() - t))
@@ -75,11 +64,5 @@ def main(tokenizer):
 
 
 if __name__ == '__main__':
-    # tokenizer = sys.argv[1].strip()
-    # main(tokenizer)
-
-    with open('audio_url.csv', 'r') as f:
-        for line in f:
-            keyword, url = line.strip().split(',')
-            update_audio_url(client, "comments.comment_origin", keyword, 100, url)
-            # update_audio_url(client, "comments.comment_origin", keyword, 100, "")
+    tokenizer = sys.argv[1].strip()
+    main(tokenizer)
