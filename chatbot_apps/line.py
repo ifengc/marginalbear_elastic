@@ -116,7 +116,7 @@ def _user_id(source):
     return utype, uid
 
 
-def gen_msg_obj(reply_text, audio_duration=None):
+def gen_msg_obj(reply_text, audio_duration=5000):
     if 'imgur' in reply_text:
         match_web = regex.search(r'(http|https):\/\/imgur\.com\/[a-z0-9A-Z]{7}', reply_text)
         match_jpg = regex.search(r'(http|https):\/\/(i|m)\.imgur\.com\/[a-z0-9A-Z]{7}\.jpg', reply_text)
@@ -135,7 +135,7 @@ def gen_msg_obj(reply_text, audio_duration=None):
         else:
             return TextSendMessage(text=reply_text)
     elif 'm4a' in reply_text:
-        reply_text = reply_text.sub('', '.m4a')
+        reply_text = reply_text.replace('.m4a', '')
         m4a_url = 'https://marginalbear.ml/m4a/' + urllib.parse.quote(reply_text) + '.m4a'
         return AudioSendMessage(original_content_url=m4a_url, duration=audio_duration)
     else:
